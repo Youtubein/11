@@ -1,157 +1,283 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Study Countdown Dashboard</title>
-<style>
-body {
-    margin:0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(160deg, #0f1b67, #111827);
-    color: #fff;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding:20px;
-    min-height:100vh;
-}
-.schedule {
-    width: 90%;
-    max-width:700px;
-    margin-bottom:20px;
-}
-.block {
-    padding:15px;
-    margin:8px 0;
-    border-radius:12px;
-    background: rgba(2,6,23,0.6);
-    transition: 0.3s all;
-    cursor:pointer;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-.block:hover { transform: scale(1.05); }
-.history { background: rgba(31,119,180,0.8);}
-.coding { background: rgba(255,127,14,0.8);}
-.vedic { background: rgba(44,160,44,0.8);}
-.polity { background: rgba(255, 39, 39, 0.8);}
-.nap { background: rgba(33, 9, 9, 0.8);}
-.sunday { background: rgba(123, 104, 238,0.8);}
-.current { box-shadow: 0 0 25px #60a5fa; transform: scale(1.05);}
-.time { font-weight:bold; margin-right:10px; min-width:80px; text-align:right;}
-.countdown { font-weight:bold; font-size:1.2em;}
-.note-box {
-    margin-top:20px;
-    padding:15px;
-    border-radius:12px;
-    background: rgba(60,60,60,0.6);
-    width:90%;
-    max-width:700px;
-    font-size:1.1em;
-    text-align:center;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SUNDAY STUDY DASHBOARD</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #68b4bd, #f0fdfa);
+      color: #1e293b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.8em;
+      font-weight: 900;
+      margin: 20px 0;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #06b6d4, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 3px 12px rgba(16, 212, 6, 0.3);
+      animation: titleGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes titleGlow {
+      from { text-shadow: 0 3px 12px rgba(6, 182, 212, 0.3); }
+      to { text-shadow: 0 5px 25px rgba(59, 130, 246, 0.5), 0 0 35px rgba(139, 92, 246, 0.4); }
+    }
+
+    .container {
+      width: 95%;
+      max-width: 1000px;
+      overflow-x: auto;
+      border-radius: 22px;
+      box-shadow: 0 2px 20px #030348;
+      backdrop-filter: blur(12px);
+      border: 2px solid rgb(255, 62, 117);
+      background: rgba(38, 156, 199, 0.022);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-weight: 700;
+    }
+
+    th {
+      background: linear-gradient(135deg, #0891b2, #2563eb);
+      color: rgb(215, 25, 25);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.95em;
+      letter-spacing: 1.5px;
+      padding: 18px 14px;
+      text-align: center;
+      border-bottom: 4px solid #1df405;
+    }
+
+    td {
+      padding: 18px 14px;
+      text-align: center;
+      border-bottom: 1px solid rgb(14, 4, 36);
+      font-weight: 700;
+      font-size: 1.05em;
+      transition: all 0.3s ease;
+    }
+
+    tr:hover {
+      background: rgba(162, 237, 232, 0.9);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    /* === DISTINCT & RELATED COLORS === */
+    .handwriting      { background: rgb(147, 186, 231); }   /* Light Blue */
+    .maths-class      { background: rgba(251, 146, 60, 0.5); }    /* Orange */
+    .maths-practice   { background: rgba(251, 191, 36, 0.5); }    /* Amber */
+    .coding           { background: rgba(34, 211, 238, 0.5); }    /* Cyan */
+    .reasoning-class  { background: rgba(141, 74, 222, 0.5); }    /* Green */
+    .reasoning-practice { background: rgba(255, 50, 32, 0.792); } /* Emerald */
+
+    /* === CURRENT SESSION PULSE === */
+    .current {
+      font-weight: 900 !important;
+      border-left: 6px solid;
+      animation: pulse 2s infinite;
+    }
+
+    .current.handwriting      { border-left-color: #3b82f6; }
+    .current.maths-class      { border-left-color: #f97316; }
+    .current.maths-practice   { border-left-color: #f59e0b; }
+    .current.coding           { border-left-color: #06b6d4; }
+    .current.reasoning-class  { border-left-color: #22c55e; }
+    .current.reasoning-practice { border-left-color: #10b981; }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+      50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.8); }
+    }
+
+    .countdown, .duration, .remaining {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      min-width: 140px;
+      color: #1e40af;
+      text-shadow: 0 1px 4px rgba(30, 64, 175, 0.2);
+    }
+
+    .remaining {
+      color: #04093b;
+      font-size: 1.1em;
+    }
+
+    .note-box {
+      margin-top: 30px;
+      padding: 24px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 249, 255, 0.8));
+      width: 90%;
+      max-width: 950px;
+      font-size: 1.3em;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: #000dff;
+      box-shadow: 0 12px 35px rgba(179, 26, 26, 0.1);
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      th, td { font-size: 0.9em; padding: 12px 8px; }
+      h1 { font-size: 2em; }
+      .countdown, .duration, .remaining { font-size: 0.95em; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="schedule">
-  <div class="block history" id="history-1"><div class="time">6:30 - 10:30</div><div>History</div><div class="countdown" id="cd-history"></div></div>
-  <div class="block nap" id="nap-1"><div class="time">10:30 - 11:00</div><div>Nap/break/game</div><div class="countdown" id="cd-nap1"></div></div>
-  <div class="block coding" id="coding-1"><div class="time">11:00 - 14:00</div><div>Coding</div><div class="countdown" id="cd-coding"></div></div>
-  <div class="block nap" id="nap-2"><div class="time">14:00 - 14:30</div><div>Nap/Optional Coding</div><div class="countdown" id="cd-nap2"></div></div>
-  <div class="block vedic" id="vedic-1"><div class="time">14:30 - 15:30</div><div>Vedic Maths</div><div class="countdown" id="cd-vedic"></div></div>
-  <div class="block nap" id="nap-3"><div class="time">15:30 - 16:00</div><div>Nap/break/game</div><div class="countdown" id="cd-nap3"></div></div>
-  <div class="block polity" id="polity-1"><div class="time">16:00 - 19:30</div><div>Polity</div><div class="countdown" id="cd-polity"></div></div>
+  <h1>SUNDAY STUDY DASHBOARD</h1>
 
-  <!-- Sunday Special -->
-  <div class="block sunday" id="sunday-1"><div class="time">7:00 - 18:00</div><div>Sunday: Test / Game / Free</div><div class="countdown" id="cd-sunday1"></div></div>
-</div>
+  <div class="container">
+    <table>
+      <thead>
+        <tr>
+          <th>TIME</th>
+          <th>SESSION</th>
+          <th>DURATION</th>
+          <th>COUNTDOWN</th>
+          <th>REMAINING</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="handwriting" id="handwriting">
+          <td>8:00 - 8:30</td>
+          <td>English Handwriting</td>
+          <td class="duration" id="dur-handwriting"></td>
+          <td class="countdown" id="cd-handwriting"></td>
+          <td class="remaining" id="rem-handwriting"></td>
+        </tr>
+        <tr class="maths-class" id="maths-class">
+          <td>8:30 - 12:30</td>
+          <td>Maths – Class</td>
+          <td class="duration" id="dur-maths-class"></td>
+          <td class="countdown" id="cd-maths-class"></td>
+          <td class="remaining" id="rem-maths-class"></td>
+        </tr>
+        <tr class="maths-practice" id="maths-practice">
+          <td>12:30 - 13:30</td>
+          <td>Maths – Practice</td>
+          <td class="duration" id="dur-maths-practice"></td>
+          <td class="countdown" id="cd-maths-practice"></td>
+          <td class="remaining" id="rem-maths-practice"></td>
+        </tr>
+        <tr class="coding" id="coding">
+          <td>13:30 - 14:30</td>
+          <td>Coding Quiz</td>
+          <td class="duration" id="dur-coding"></td>
+          <td class="countdown" id="cd-coding"></td>
+          <td class="remaining" id="rem-coding"></td>
+        </tr>
+        <tr class="reasoning-class" id="reasoning-class">
+          <td>14:30 - 18:30</td>
+          <td>Reasoning – Class</td>
+          <td class="duration" id="dur-reasoning-class"></td>
+          <td class="countdown" id="cd-reasoning-class"></td>
+          <td class="remaining" id="rem-reasoning-class"></td>
+        </tr>
+        <tr class="reasoning-practice" id="reasoning-practice">
+          <td>18:30 - 19:30</td>
+          <td>Reasoning – Practice</td>
+          <td class="duration" id="dur-reasoning-practice"></td>
+          <td class="countdown" id="cd-reasoning-practice"></td>
+          <td class="remaining" id="rem-reasoning-practice"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-<div class="note-box">
-  No need to do all at the same time.
-</div>
+  <div class="note-box">
+    never brake your self-promise
+  </div>
 
-<script>
-const sessions = [
-  {id:'history-1', start:'06:30', end:'10:30', cd:'cd-history'},
-  {id:'nap-1', start:'10:30', end:'11:00', cd:'cd-nap1'},
-  {id:'coding-1', start:'11:00', end:'14:00', cd:'cd-coding'},
-  {id:'nap-2', start:'14:00', end:'14:30', cd:'cd-nap2'},
-  {id:'vedic-1', start:'14:30', end:'15:30', cd:'cd-vedic'},
-  {id:'nap-3', start:'15:30', end:'16:00', cd:'cd-nap3'},
-  {id:'polity-1', start:'16:00', end:'19:30', cd:'cd-polity'},
- ];
+  <script>
+    const sessions = [
+      { id: 'handwriting', start: '08:00', end: '08:30', cd: 'cd-handwriting', dur: 'dur-handwriting', rem: 'rem-handwriting' },
+      { id: 'maths-class', start: '08:30', end: '12:30', cd: 'cd-maths-class', dur: 'dur-maths-class', rem: 'rem-maths-class' },
+      { id: 'maths-practice', start: '12:30', end: '13:30', cd: 'cd-maths-practice', dur: 'dur-maths-practice', rem: 'rem-maths-practice' },
+      { id: 'coding', start: '13:30', end: '14:30', cd: 'cd-coding', dur: 'dur-coding', rem: 'rem-coding' },
+      { id: 'reasoning-class', start: '14:30', end: '18:30', cd: 'cd-reasoning-class', dur: 'dur-reasoning-class', rem: 'rem-reasoning-class' },
+      { id: 'reasoning-practice', start: '18:30', end: '19:30', cd: 'cd-reasoning-practice', dur: 'dur-reasoning-practice', rem: 'rem-reasoning-practice' },
+    ];
 
-function parseTime(t) {
-  const [h,m] = t.split(':').map(Number);
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
-}
-
-function getSessionDuration(start, end) {
-  const diff = (parseTime(end) - parseTime(start)) / 1000;
-  const h = String(Math.floor(diff/3600)).padStart(2,'0');
-  const m = String(Math.floor((diff%3600)/60)).padStart(2,'0');
-  return `${h}:${m}`;
-}
-
-let sessionTimers = {};
-
-function updateSessions() {
-  const now = new Date();
-  const today = now.getDay(); // Sunday = 0
-  let currentSession = null;
-
-  // Find current session
-  sessions.forEach(s => {
-    if(s.onlySunday && today !== 0) return; // skip Sunday countdown
-    const start = parseTime(s.start);
-    const end = parseTime(s.end);
-    if(now >= start && now <= end) currentSession = s;
-  });
-
-  // Update all sessions
-  sessions.forEach(s => {
-    const block = document.getElementById(s.id);
-    const cdEl = document.getElementById(s.cd);
-    const totalTime = getSessionDuration(s.start, s.end);
-
-    block.classList.remove('current');
-
-    // Sunday countdown only if Sunday
-    if(s.onlySunday && today === 0) {
-      if(currentSession && currentSession.id === s.id) {
-        block.classList.add('current');
-        let diff = Math.floor((parseTime(s.end)-now)/1000);
-        const h = String(Math.floor(diff/3600)).padStart(2,'0');
-        const m = String(Math.floor((diff%3600)/60)).padStart(2,'0');
-        const sec = String(diff%60).padStart(2,'0');
-        cdEl.textContent = `${h}:${m}:${sec} / ${totalTime}`;
-      } else {
-        cdEl.textContent = totalTime;
-      }
-      return;
+    function parseTime(t) {
+      const [h, m] = t.split(':').map(Number);
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
     }
 
-    // Weekday sessions
-    if(currentSession && currentSession.id === s.id) {
-      block.classList.add('current');
-      let diff = Math.floor((parseTime(s.end)-now)/1000);
-      const h = String(Math.floor(diff/3600)).padStart(2,'0');
-      const m = String(Math.floor((diff%3600)/60)).padStart(2,'0');
-      const sec = String(diff%60).padStart(2,'0');
-      cdEl.textContent = `${h}:${m}:${sec} / ${totalTime}`;
-    } else {
-      cdEl.textContent = totalTime;
+    function formatDuration(start, end) {
+      const diff = (parseTime(end) - parseTime(start)) / 60000; // minutes
+      const h = Math.floor(diff / 60);
+      const m = diff % 60;
+      return `${h}h ${m}m`;
     }
-  });
-}
 
-setInterval(updateSessions,1000);
-</script>
+    function updateDashboard() {
+      const now = new Date();
+      let currentIndex = -1;
+
+      // Find current session
+      sessions.forEach((s, i) => {
+        const start = parseTime(s.start);
+        const end = parseTime(s.end);
+        if (now >= start && now <= end) currentIndex = i;
+      });
+
+      sessions.forEach((s, i) => {
+        const row = document.getElementById(s.id);
+        const cdEl = document.getElementById(s.cd);
+        const durEl = document.getElementById(s.dur);
+        const remEl = document.getElementById(s.rem);
+
+        const totalDur = formatDuration(s.start, s.end);
+        durEl.textContent = totalDur;
+
+        row.classList.remove('current');
+
+        if (currentIndex === i) {
+          row.classList.add('current');
+          const diff = Math.max(0, Math.floor((parseTime(s.end) - now) / 1000));
+          const h = String(Math.floor(diff / 3600)).padStart(2, '0');
+          const m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
+          const sec = String(diff % 60).padStart(2, '0');
+          cdEl.textContent = `${h}:${m}:${sec}`;
+
+          // Remaining sessions
+          const remaining = sessions.length - i - 1;
+          remEl.textContent = remaining > 0 ? `${remaining} left` : `Last!`;
+        } else {
+          cdEl.textContent = totalDur;
+          remEl.textContent = i > currentIndex ? `${sessions.length - i} left` : 'Done';
+        }
+      });
+    }
+
+    setInterval(updateDashboard, 1000);
+    updateDashboard();
+  </script>
+
 </body>
 </html>
-
-
